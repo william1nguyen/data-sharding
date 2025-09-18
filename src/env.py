@@ -1,43 +1,27 @@
 import os
-from dataclasses import dataclass
 from dotenv import load_dotenv
-
+from dataclasses import dataclass
+from typing import List
 
 load_dotenv()
 
 
 @dataclass
-class EnvSchema:
-    DEBUG: bool
-
+class Environment:
+    MAINDB_URL: str
+    SHARD_URLS: List[str]
     MAX_GEN_USERS: int
-    AUTO_GENERATE: bool
-
-    DB_HOST: str
-    DB_USER: str
-    DB_PASSWORD: str
-
-    MAIN_DB_PORT: int
-    MAIN_DB_NAME: str
-
-    ODD_USER_ID_DB_PORT: int
-    ODD_USER_ID_DB_NAME: str
-
-    EVEN_USER_ID_DB_PORT: int
-    EVEN_USER_ID_DB_NAME: str
 
 
-env = EnvSchema(
-    DEBUG=os.getenv("DEBUG"),
-    MAX_GEN_USERS=os.getenv("MAX_GEN_USERS"),
-    AUTO_GENERATE=os.getenv("AUTO_GENERATE"),
-    DB_HOST=os.getenv("DB_HOST"),
-    DB_USER=os.getenv("DB_USER"),
-    DB_PASSWORD=os.getenv("DB_PASSWORD"),
-    MAIN_DB_PORT=int(os.getenv("MAIN_DB_PORT")),
-    MAIN_DB_NAME=os.getenv("MAIN_DB_NAME"),
-    ODD_USER_ID_DB_PORT=int(os.getenv("ODD_USER_ID_DB_PORT")),
-    ODD_USER_ID_DB_NAME=os.getenv("ODD_USER_ID_DB_NAME"),
-    EVEN_USER_ID_DB_PORT=int(os.getenv("EVEN_USER_ID_DB_PORT")),
-    EVEN_USER_ID_DB_NAME=os.getenv("EVEN_USER_ID_DB_NAME"),
-)
+def load_environment():
+    maindb_url = os.getenv("MAINDB_URL")
+    shard_urls_string = os.getenv("SHARD_URLS", "")
+    shard_urls = [url.strip() for url in shard_urls_string.split(",")]
+    max_gen_users = int(os.getenv("MAX_GEN_USERS", 1000))
+
+    return Environment(
+        MAINDB_URL=maindb_url, SHARD_URLS=shard_urls, MAX_GEN_USERS=max_gen_users
+    )
+
+
+env = load_environment()
